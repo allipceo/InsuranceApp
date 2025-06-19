@@ -11,12 +11,15 @@
         #top { display: flex; justify-content: space-between; align-items: center; }
         #result { margin: 20px 0; font-weight: bold; }
         #homebtn { margin-top: 20px; background: #6c757d !important; color: #fff !important; cursor: pointer; }
+        #source-msg { font-size: 12px; color: #888; margin-top: 8px; text-align: right; }
+        #loading { font-size: 15px; color: #555; text-align: center; margin: 30px 0; }
     </style>
 </head>
 <body>
     <div id="app"></div>
     <script>
     let correctCount=0, wrongCount=0, currentQuestion=0;
+    let dataSourceMsg = '';
 
     async function loadQuestions() {
       try {
@@ -36,10 +39,12 @@
             });
           }
         }
-        console.log('JSON에서 로딩됨', questions);
+        dataSourceMsg = '<span id="source-msg">✅ JSON 데이터 로딩 완료</span>';
+        console.log('JSON 파일에서 데이터 로딩 성공', questions);
         return questions;
       } catch (error) {
-        console.log('데이터 로딩 실패, 기본값 사용');
+        dataSourceMsg = '<span id="source-msg">⚠️ 기본 데이터 사용 중</span>';
+        console.log('JSON 로딩 실패, 기본 데이터 사용');
         // 기존 하드코딩 데이터 (5문제)
         return [
           {q: "보험업법상 보험중개사의 업무범위에 대한 설명으로 옳은 것은?", o: ["보험계약의 체결을 중개하는 업무만 할 수 있다","보험계약의 체결 중개 및 보험계약의 관리업무를 할 수 있다","보험금 지급업무를 직접 처리할 수 있다","보험상품을 직접 개발할 수 있다"], a: 1, correctText: "보험계약의 체결 중개 및 보험계약의 관리업무를 할 수 있다"},
@@ -63,18 +68,20 @@
       `;
       correctCount=0; wrongCount=0; currentQuestion=0;
       window.questionsData = null;
+      dataSourceMsg = '';
     }
 
     async function showQuestion(idx) {
       currentQuestion=idx;
       if (!window.questionsData) {
+        document.getElementById('app').innerHTML = `<div id='loading'>데이터 로딩 중...</div>`;
         window.questionsData = await loadQuestions();
       }
       let q = window.questionsData[idx];
       let top = `<div id='top'><div>23회 보험중개사 시험 (문제 ${idx+1}/5)</div><div>정답: ${correctCount}개 | 오답: ${wrongCount}개</div></div>`;
       let opts = '';
       for(let i=0;i<4;i++) opts += `<button class='btn blue' id='opt${i}' onclick='check(${i})'>${q.o[i]}</button>`;
-      document.getElementById('app').innerHTML = `${top}<div style='margin:20px 0;'>${q.q}</div><div id='opts'>${opts}</div><div id='result'></div><button id='homebtn' class='btn gray' onclick='goHome()'>홈</button>`;
+      document.getElementById('app').innerHTML = `${top}<div style='margin:20px 0;'>${q.q}</div><div id='opts'>${opts}</div><div id='result'></div><button id='homebtn' class='btn gray' onclick='goHome()'>홈</button>${dataSourceMsg}`;
       document.getElementById('homebtn').disabled = false;
     }
 
@@ -101,6 +108,7 @@
         <p>총 문제: 5개<br>정답: ${correctCount}개<br>오답: ${wrongCount}개</p>
         <div style='margin:20px 0;'><b>각 문제별 정답:</b><br>${answerList}</div>
         <button class='btn blue' onclick='goHome()'>홈으로</button>
+        ${dataSourceMsg}
       `;
     }
     function goHome() {
