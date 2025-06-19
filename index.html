@@ -25,7 +25,8 @@
           "보험금 지급업무를 직접 처리할 수 있다",
           "보험상품을 직접 개발할 수 있다"
         ],
-        a: 1
+        a: 1,
+        correctText: "보험계약의 체결 중개 및 보험계약의 관리업무를 할 수 있다"
       },
       {
         q: "보험중개사의 등록요건에 해당하지 않는 것은?",
@@ -35,7 +36,8 @@
           "보험관련 업무경력이 2년 이상인 자",
           "보험중개사 교육과정을 이수한 자"
         ],
-        a: 2
+        a: 2,
+        correctText: "보험관련 업무경력이 2년 이상인 자"
       },
       {
         q: "보험업법상 보험회사의 의무사항으로 옳지 않은 것은?",
@@ -45,7 +47,8 @@
           "임원변경의 신고의무",
           "영업방법서의 신고의무"
         ],
-        a: 3
+        a: 3,
+        correctText: "영업방법서의 신고의무"
       },
       {
         q: "상법상 보험계약의 성질에 대한 설명으로 옳은 것은?",
@@ -55,7 +58,8 @@
           "요물계약이다",
           "무상계약이다"
         ],
-        a: 1
+        a: 1,
+        correctText: "낙성계약이다"
       },
       {
         q: "민법상 계약의 해제에 관한 설명으로 옳지 않은 것은?",
@@ -65,7 +69,8 @@
           "해제권의 행사는 철회할 수 있다",
           "해제로 인하여 손해배상청구권이 소멸한다"
         ],
-        a: 3
+        a: 3,
+        correctText: "해제로 인하여 손해배상청구권이 소멸한다"
       }
     ];
     let correctCount=0, wrongCount=0, currentQuestion=0;
@@ -102,9 +107,15 @@
       document.getElementById('homebtn').disabled = false;
     }
     function showResult() {
+      let answerNums = ['①','②','③','④'];
+      let answerList = '';
+      for(let i=0;i<5;i++) {
+        answerList += `문제 ${i+1}: ${answerNums[data[i].a]}번 - ${data[i].correctText}<br>`;
+      }
       document.getElementById('app').innerHTML = `
         <h2>23회 시험 완료!</h2>
         <p>총 문제: 5개<br>정답: ${correctCount}개<br>오답: ${wrongCount}개</p>
+        <div style='margin:20px 0;'><b>각 문제별 정답:</b><br>${answerList}</div>
         <button class='btn blue' onclick='goHome()'>홈으로</button>
       `;
     }
