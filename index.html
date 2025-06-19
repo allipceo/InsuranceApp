@@ -2,22 +2,20 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>보험중개사 시험</title>
+    <title>보험중개사 자격시험</title>
     <style>
-        body { font-family: sans-serif; max-width: 500px; margin: 40px auto; }
-        .btn { display: block; width: 100%; margin: 10px 0; padding: 15px; background: #3498db; color: #fff; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }
-        .btn:disabled { background: #bdc3c7; cursor: default; }
+        body { font-family: sans-serif; max-width: 400px; margin: 40px auto; }
+        .btn { display: block; width: 100%; margin: 10px 0; padding: 15px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }
+        .blue { background: #3498db; color: #fff; }
+        .gray { background: #bdc3c7; color: #fff; cursor: default; }
+        #top { display: flex; justify-content: space-between; align-items: center; }
         #result { margin: 20px 0; font-weight: bold; }
+        #homebtn { margin-top: 20px; }
     </style>
 </head>
 <body>
-    <h2 id="title"></h2>
-    <div id="question"></div>
-    <div id="options"></div>
-    <div id="result"></div>
-    <button id="next" style="display:none; margin-top:20px;" onclick="next()">다음 문제</button>
+    <div id="app"></div>
     <script>
-    // 5문제 하드코딩
     const data = [
       {
         q: "보험업법상 보험중개사의 업무범위에 대한 설명으로 옳은 것은?",
@@ -70,32 +68,45 @@
         a: 3
       }
     ];
-    let idx = 0;
-    function render() {
-      document.getElementById('title').textContent = `23회 보험중개사 시험 (문제 ${idx+1}/5)`;
-      document.getElementById('question').textContent = data[idx].q;
-      let html = '';
-      for(let i=0;i<4;i++) {
-        html += `<button class='btn' onclick='check(${i})' id='opt${i}'>${data[idx].o[i]}</button>`;
-      }
-      document.getElementById('options').innerHTML = html;
-      document.getElementById('result').textContent = '';
-      document.getElementById('next').style.display = 'none';
+    let correctCount=0, wrongCount=0, currentQuestion=0;
+    function showHome() {
+      document.getElementById('app').innerHTML = `
+        <h2>보험중개사 자격시험</h2>
+        <button class='btn gray'>20회</button>
+        <button class='btn gray'>21회</button>
+        <button class='btn gray'>22회</button>
+        <button class='btn blue' onclick='showQuestion(0)'>23회</button>
+        <button class='btn gray'>24회</button>
+        <button class='btn gray'>25회</button>
+      `;
+      correctCount=0; wrongCount=0; currentQuestion=0;
+    }
+    function showQuestion(idx) {
+      currentQuestion=idx;
+      let q = data[idx];
+      let top = `<div id='top'><div>23회 보험중개사 시험 (문제 ${idx+1}/5)</div><div>정답: ${correctCount}개 | 오답: ${wrongCount}개</div></div>`;
+      let opts = '';
+      for(let i=0;i<4;i++) opts += `<button class='btn blue' id='opt${i}' onclick='check(${i})'>${q.o[i]}</button>`;
+      document.getElementById('app').innerHTML = `${top}<div style='margin:20px 0;'>${q.q}</div><div id='opts'>${opts}</div><div id='result'></div><button id='homebtn' class='btn gray' onclick='showHome()'>홈</button>`;
     }
     function check(i) {
-      let correct = (i === data[idx].a);
+      let q = data[currentQuestion];
+      let correct = (i===q.a);
+      if(correct) correctCount++; else wrongCount++;
       document.getElementById('result').textContent = correct ? '정답입니다!' : '오답입니다.';
       for(let j=0;j<4;j++) document.getElementById('opt'+j).disabled = true;
-      document.getElementById('next').style.display = 'inline-block';
+      document.getElementById('top').innerHTML = `<div>23회 보험중개사 시험 (문제 ${currentQuestion+1}/5)</div><div>정답: ${correctCount}개 | 오답: ${wrongCount}개</div>`;
+      if(currentQuestion<4) document.getElementById('result').innerHTML += `<br><button class='btn blue' onclick='showQuestion(${currentQuestion+1})'>다음 문제</button>`;
+      else document.getElementById('result').innerHTML += `<br><button class='btn blue' onclick='showResult()'>결과 보기</button>`;
     }
-    function next() {
-      idx++;
-      if(idx < 5) render();
-      else {
-        document.body.innerHTML = '<h2>시험 종료</h2><p>수고하셨습니다!</p>';
-      }
+    function showResult() {
+      document.getElementById('app').innerHTML = `
+        <h2>23회 시험 완료!</h2>
+        <p>총 문제: 5개<br>정답: ${correctCount}개<br>오답: ${wrongCount}개</p>
+        <button class='btn blue' onclick='showHome()'>홈으로</button>
+      `;
     }
-    render();
+    showHome();
     </script>
 </body>
 </html>
