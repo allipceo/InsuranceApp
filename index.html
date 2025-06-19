@@ -1,178 +1,101 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>보험중개사 시험 앱</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #f5f5f5;
-    }
-    .container {
-      background-color: white;
-      border-radius: 10px;
-      padding: 30px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    h1 {
-      color: #2c3e50;
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: 28px;
-    }
-    .exam-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-top: 30px;
-    }
-    .exam-button {
-      background: linear-gradient(135deg, #3498db, #2980b9);
-      color: white;
-      border: none;
-      padding: 20px;
-      border-radius: 10px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .exam-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
-    }
-    .subtitle {
-      text-align: center;
-      color: #7f8c8d;
-      margin-bottom: 20px;
-      font-size: 16px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>보험중개사 시험</title>
+    <style>
+        body { font-family: sans-serif; max-width: 500px; margin: 40px auto; }
+        .btn { display: block; width: 100%; margin: 10px 0; padding: 15px; background: #3498db; color: #fff; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }
+        .btn:disabled { background: #bdc3c7; cursor: default; }
+        #result { margin: 20px 0; font-weight: bold; }
+    </style>
 </head>
 <body>
-  <div class="container" id="home-screen">
-    <h1>🏛️ 보험중개사 시험 앱</h1>
-    <p class="subtitle">연습하고 싶은 회차를 선택하세요</p>
-    
-    <div class="exam-grid">
-      <button class="exam-button" onclick="startExam(20)">20회 시험</button>
-      <button class="exam-button" onclick="startExam(21)">21회 시험</button>
-      <button class="exam-button" onclick="startExam(22)">22회 시험</button>
-      <button class="exam-button" onclick="startExam(23)">23회 시험</button>
-      <button class="exam-button" onclick="startExam(24)">24회 시험</button>
-      <button class="exam-button" onclick="startExam(25)">25회 시험</button>
-    </div>
-  </div>
-  <div class="container" id="quiz-screen" style="display:none">
-    <!-- JS로 문제 내용이 들어갈 영역 -->
-  </div>
-  <script>
-    let currentQuestion = 0;
-    let correctCount = 0;
-    let wrongCount = 0;
-    let totalQuestions = 0;
-
-    function startExam(examNumber) {
-      if (examNumber !== 23) {
-        alert('준비 중입니다.');
-        return;
+    <h2 id="title"></h2>
+    <div id="question"></div>
+    <div id="options"></div>
+    <div id="result"></div>
+    <button id="next" style="display:none; margin-top:20px;" onclick="next()">다음 문제</button>
+    <script>
+    // 5문제 하드코딩
+    const data = [
+      {
+        q: "보험업법상 보험중개사의 업무범위에 대한 설명으로 옳은 것은?",
+        o: [
+          "보험계약의 체결을 중개하는 업무만 할 수 있다",
+          "보험계약의 체결 중개 및 보험계약의 관리업무를 할 수 있다",
+          "보험금 지급업무를 직접 처리할 수 있다",
+          "보험상품을 직접 개발할 수 있다"
+        ],
+        a: 1
+      },
+      {
+        q: "보험중개사의 등록요건에 해당하지 않는 것은?",
+        o: [
+          "보험중개사 자격시험에 합격한 자",
+          "금고 이상의 형을 받고 5년이 경과하지 아니한 자",
+          "보험관련 업무경력이 2년 이상인 자",
+          "보험중개사 교육과정을 이수한 자"
+        ],
+        a: 2
+      },
+      {
+        q: "보험업법상 보험회사의 의무사항으로 옳지 않은 것은?",
+        o: [
+          "보험약관의 신고의무",
+          "보험료율의 신고의무",
+          "임원변경의 신고의무",
+          "영업방법서의 신고의무"
+        ],
+        a: 3
+      },
+      {
+        q: "상법상 보험계약의 성질에 대한 설명으로 옳은 것은?",
+        o: [
+          "편면계약이다",
+          "낙성계약이다",
+          "요물계약이다",
+          "무상계약이다"
+        ],
+        a: 1
+      },
+      {
+        q: "민법상 계약의 해제에 관한 설명으로 옳지 않은 것은?",
+        o: [
+          "해제권은 상대방에 대한 의사표시로 행사한다",
+          "해제는 소급적 효력을 가진다",
+          "해제권의 행사는 철회할 수 있다",
+          "해제로 인하여 손해배상청구권이 소멸한다"
+        ],
+        a: 3
       }
-      currentQuestion = 0;
-      correctCount = 0;
-      wrongCount = 0;
-      totalQuestions = examData["23"].questions.length;
-      document.getElementById('home-screen').style.display = 'none';
-      document.getElementById('quiz-screen').style.display = 'block';
-      showQuestion(currentQuestion);
+    ];
+    let idx = 0;
+    function render() {
+      document.getElementById('title').textContent = `23회 보험중개사 시험 (문제 ${idx+1}/5)`;
+      document.getElementById('question').textContent = data[idx].q;
+      let html = '';
+      for(let i=0;i<4;i++) {
+        html += `<button class='btn' onclick='check(${i})' id='opt${i}'>${data[idx].o[i]}</button>`;
+      }
+      document.getElementById('options').innerHTML = html;
+      document.getElementById('result').textContent = '';
+      document.getElementById('next').style.display = 'none';
     }
-
-    function showQuestion(questionIndex) {
-      console.log('showQuestion 호출, index:', questionIndex);
-      const question = examData["23"].questions[questionIndex];
-      let optionsHtml = '';
-      for (let i = 0; i < question.options.length; i++) {
-        optionsHtml += `<button class="exam-button" style="width:100%;margin-bottom:10px;" onclick="selectAnswer(${questionIndex}, ${i+1})">${question.options[i]}</button>`;
-      }
-      document.getElementById('quiz-screen').innerHTML = `
-        <div style="margin-bottom:10px;"><strong>문제 ${questionIndex + 1}/${totalQuestions}, 정답 ${correctCount}개, 오답 ${wrongCount}개</strong></div>
-        <h2>문제 ${questionIndex + 1}</h2>
-        <p>${question.question}</p>
-        <div class="options">${optionsHtml}</div>
-        <button onclick="goHome()" style="margin-top:20px;">홈으로</button>
-      `;
+    function check(i) {
+      let correct = (i === data[idx].a);
+      document.getElementById('result').textContent = correct ? '정답입니다!' : '오답입니다.';
+      for(let j=0;j<4;j++) document.getElementById('opt'+j).disabled = true;
+      document.getElementById('next').style.display = 'inline-block';
     }
-
-    function selectAnswer(questionIndex, selectedAnswer) {
-      const question = examData["23"].questions[questionIndex];
-      const isCorrect = checkAnswer(question.id, selectedAnswer);
-      let resultMsg = isCorrect ? '정답입니다! 🎉' : '오답입니다. 😢';
-      let explanation = getExplanation(question.id);
-      if (isCorrect) {
-        correctCount++;
-      } else {
-        wrongCount++;
-      }
-      let nextBtn = '';
-      if (currentQuestion < totalQuestions - 1) {
-        nextBtn = `<button id="next-btn" style="margin-top:15px;">다음 문제</button>`;
-      } else {
-        nextBtn = `<button onclick="showResult()" style="margin-top:15px;">결과 보기</button>`;
-      }
-      document.querySelector('.options').innerHTML += `
-        <div style="margin-top:15px;">
-          <strong>${resultMsg}</strong><br>
-          ${explanation}<br>
-          ${nextBtn}
-        </div>
-      `;
-      // 선택지 버튼만 비활성화, 다음 문제 버튼은 활성화
-      const buttons = document.querySelectorAll('.options button');
-      buttons.forEach(btn => {
-        if (btn.id !== 'next-btn') btn.disabled = true;
-      });
-      // 통계 갱신
-      document.querySelector('#quiz-screen > div').innerHTML = `<strong>문제 ${currentQuestion + 1}/${totalQuestions}, 정답 ${correctCount}개, 오답 ${wrongCount}개</strong>`;
-      // 다음 문제 버튼 이벤트 연결 및 강제 활성화
-      if (currentQuestion < totalQuestions - 1) {
-        const nextBtnElem = document.getElementById('next-btn');
-        if (nextBtnElem) {
-          nextBtnElem.disabled = false;
-          nextBtnElem.style.pointerEvents = 'auto';
-          nextBtnElem.onclick = function() {
-            console.log('다음 문제 버튼 클릭됨');
-            nextQuestion();
-          };
-        }
+    function next() {
+      idx++;
+      if(idx < 5) render();
+      else {
+        document.body.innerHTML = '<h2>시험 종료</h2><p>수고하셨습니다!</p>';
       }
     }
-
-    function nextQuestion() {
-      currentQuestion++;
-      console.log('nextQuestion 호출, currentQuestion:', currentQuestion);
-      if (currentQuestion < totalQuestions) {
-        showQuestion(currentQuestion);
-      } else {
-        showResult();
-      }
-    }
-
-    function showResult() {
-      document.getElementById('quiz-screen').innerHTML = `
-        <h2>결과</h2>
-        <p>총 ${totalQuestions}문제 중 ${correctCount}개 정답, ${wrongCount}개 오답</p>
-        <button onclick="goHome()" style="margin-top:20px;">홈으로</button>
-      `;
-    }
-
-    function goHome() {
-      document.getElementById('quiz-screen').style.display = 'none';
-      document.getElementById('home-screen').style.display = 'block';
-    }
-  </script>
-  <script src="questions.js"></script>
+    render();
+    </script>
 </body>
 </html>
