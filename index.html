@@ -129,15 +129,19 @@
           ${nextBtn}
         </div>
       `;
-      // 선택지 버튼 비활성화
+      // 선택지 버튼만 비활성화, 다음 문제 버튼은 활성화
       const buttons = document.querySelectorAll('.options button');
-      buttons.forEach(btn => btn.disabled = true);
+      buttons.forEach(btn => {
+        if (btn.id !== 'next-btn') btn.disabled = true;
+      });
       // 통계 갱신
       document.querySelector('#quiz-screen > div').innerHTML = `<strong>문제 ${currentQuestion + 1}/${totalQuestions}, 정답 ${correctCount}개, 오답 ${wrongCount}개</strong>`;
-      // 다음 문제 버튼 이벤트 연결
+      // 다음 문제 버튼 이벤트 연결 및 강제 활성화
       if (currentQuestion < totalQuestions - 1) {
         const nextBtnElem = document.getElementById('next-btn');
         if (nextBtnElem) {
+          nextBtnElem.disabled = false;
+          nextBtnElem.style.pointerEvents = 'auto';
           nextBtnElem.onclick = function() {
             console.log('다음 문제 버튼 클릭됨');
             nextQuestion();
