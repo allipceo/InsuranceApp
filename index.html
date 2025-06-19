@@ -7,10 +7,10 @@
         body { font-family: sans-serif; max-width: 400px; margin: 40px auto; }
         .btn { display: block; width: 100%; margin: 10px 0; padding: 15px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }
         .blue { background: #3498db; color: #fff; }
-        .gray { background: #bdc3c7; color: #fff; cursor: default; }
+        .gray { background: #bdc3c7; color: #fff; }
         #top { display: flex; justify-content: space-between; align-items: center; }
         #result { margin: 20px 0; font-weight: bold; }
-        #homebtn { margin-top: 20px; }
+        #homebtn { margin-top: 20px; background: #6c757d !important; color: #fff !important; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -87,7 +87,8 @@
       let top = `<div id='top'><div>23회 보험중개사 시험 (문제 ${idx+1}/5)</div><div>정답: ${correctCount}개 | 오답: ${wrongCount}개</div></div>`;
       let opts = '';
       for(let i=0;i<4;i++) opts += `<button class='btn blue' id='opt${i}' onclick='check(${i})'>${q.o[i]}</button>`;
-      document.getElementById('app').innerHTML = `${top}<div style='margin:20px 0;'>${q.q}</div><div id='opts'>${opts}</div><div id='result'></div><button id='homebtn' class='btn gray' onclick='showHome()'>홈</button>`;
+      document.getElementById('app').innerHTML = `${top}<div style='margin:20px 0;'>${q.q}</div><div id='opts'>${opts}</div><div id='result'></div><button id='homebtn' class='btn gray' onclick='goHome()'>홈</button>`;
+      document.getElementById('homebtn').disabled = false;
     }
     function check(i) {
       let q = data[currentQuestion];
@@ -98,13 +99,18 @@
       document.getElementById('top').innerHTML = `<div>23회 보험중개사 시험 (문제 ${currentQuestion+1}/5)</div><div>정답: ${correctCount}개 | 오답: ${wrongCount}개</div>`;
       if(currentQuestion<4) document.getElementById('result').innerHTML += `<br><button class='btn blue' onclick='showQuestion(${currentQuestion+1})'>다음 문제</button>`;
       else document.getElementById('result').innerHTML += `<br><button class='btn blue' onclick='showResult()'>결과 보기</button>`;
+      document.getElementById('homebtn').disabled = false;
     }
     function showResult() {
       document.getElementById('app').innerHTML = `
         <h2>23회 시험 완료!</h2>
         <p>총 문제: 5개<br>정답: ${correctCount}개<br>오답: ${wrongCount}개</p>
-        <button class='btn blue' onclick='showHome()'>홈으로</button>
+        <button class='btn blue' onclick='goHome()'>홈으로</button>
       `;
+    }
+    function goHome() {
+      correctCount=0; wrongCount=0; currentQuestion=0;
+      showHome();
     }
     showHome();
     </script>
