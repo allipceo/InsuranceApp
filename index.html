@@ -54,7 +54,7 @@
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container" id="home-screen">
     <h1>🏛️ 보험중개사 시험 앱</h1>
     <p class="subtitle">연습하고 싶은 회차를 선택하세요</p>
     
@@ -67,12 +67,46 @@
       <button class="exam-button" onclick="startExam(25)">25회 시험</button>
     </div>
   </div>
-
+  <div class="container" id="quiz-screen" style="display:none">
+    <!-- JS로 문제 내용이 들어갈 영역 -->
+  </div>
   <script>
     function startExam(examNumber) {
-      alert(`${examNumber}회 시험을 시작합니다!\n\n(곧 실제 문제가 나타날 예정입니다)`);
-      // 여기에 실제 문제 풀이 로직이 들어갈 예정
+      document.getElementById('home-screen').style.display = 'none';
+      document.getElementById('quiz-screen').style.display = 'block';
+      if (examNumber === 23) {
+        showQuestion(0);
+      }
+    }
+    function showQuestion(questionIndex) {
+      const question = examData["23"].questions[questionIndex];
+      const totalQuestions = examData["23"].questions.length;
+      let optionsHtml = '';
+      for (let i = 0; i < question.options.length; i++) {
+        optionsHtml += `<button class="exam-button" style="width:100%;margin-bottom:10px;" onclick="selectAnswer(${questionIndex}, ${i+1})">${question.options[i]}</button>`;
+      }
+      document.getElementById('quiz-screen').innerHTML = `
+        <h2>문제 ${questionIndex + 1}/${totalQuestions}</h2>
+        <p>${question.question}</p>
+        <div class="options">${optionsHtml}</div>
+        <button onclick="goHome()" style="margin-top:20px;">홈으로</button>
+      `;
+    }
+    function selectAnswer(questionIndex, selectedAnswer) {
+      const question = examData["23"].questions[questionIndex];
+      const isCorrect = checkAnswer(question.id, selectedAnswer);
+      let resultMsg = isCorrect ? '정답입니다! 🎉' : '오답입니다. 😢';
+      let explanation = getExplanation(question.id);
+      document.querySelector('.options').innerHTML += `<div style="margin-top:15px;"><strong>${resultMsg}</strong><br>${explanation}</div>`;
+      // 선택지 버튼 비활성화
+      const buttons = document.querySelectorAll('.options button');
+      buttons.forEach(btn => btn.disabled = true);
+    }
+    function goHome() {
+      document.getElementById('quiz-screen').style.display = 'none';
+      document.getElementById('home-screen').style.display = 'block';
     }
   </script>
+  <script src="questions.js"></script>
 </body>
 </html>
