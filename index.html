@@ -71,37 +71,83 @@
     <!-- JS로 문제 내용이 들어갈 영역 -->
   </div>
   <script>
+    let currentQuestion = 0;
+    let correctCount = 0;
+    let wrongCount = 0;
+    let totalQuestions = 0;
+
     function startExam(examNumber) {
+      if (examNumber !== 23) {
+        alert('준비 중입니다.');
+        return;
+      }
+      currentQuestion = 0;
+      correctCount = 0;
+      wrongCount = 0;
+      totalQuestions = examData["23"].questions.length;
       document.getElementById('home-screen').style.display = 'none';
       document.getElementById('quiz-screen').style.display = 'block';
-      if (examNumber === 23) {
-        showQuestion(0);
-      }
+      showQuestion(currentQuestion);
     }
+
     function showQuestion(questionIndex) {
       const question = examData["23"].questions[questionIndex];
-      const totalQuestions = examData["23"].questions.length;
       let optionsHtml = '';
       for (let i = 0; i < question.options.length; i++) {
         optionsHtml += `<button class="exam-button" style="width:100%;margin-bottom:10px;" onclick="selectAnswer(${questionIndex}, ${i+1})">${question.options[i]}</button>`;
       }
       document.getElementById('quiz-screen').innerHTML = `
-        <h2>문제 ${questionIndex + 1}/${totalQuestions}</h2>
+        <div style="margin-bottom:10px;"><strong>문제 ${questionIndex + 1}/${totalQuestions}, 정답 ${correctCount}개, 오답 ${wrongCount}개</strong></div>
+        <h2>문제 ${questionIndex + 1}</h2>
         <p>${question.question}</p>
         <div class="options">${optionsHtml}</div>
         <button onclick="goHome()" style="margin-top:20px;">홈으로</button>
       `;
     }
+
     function selectAnswer(questionIndex, selectedAnswer) {
       const question = examData["23"].questions[questionIndex];
       const isCorrect = checkAnswer(question.id, selectedAnswer);
       let resultMsg = isCorrect ? '정답입니다! 🎉' : '오답입니다. 😢';
       let explanation = getExplanation(question.id);
-      document.querySelector('.options').innerHTML += `<div style="margin-top:15px;"><strong>${resultMsg}</strong><br>${explanation}</div>`;
+      if (isCorrect) {
+        correctCount++;
+      } else {
+        wrongCount++;
+      }
+      let nextBtn = '';
+      if (currentQuestion < totalQuestions - 1) {
+        nextBtn = `<button onclick="nextQuestion()" style="margin-top:15px;">다음 문제</button>`;
+      } else {
+        nextBtn = `<button onclick="showResult()" style="margin-top:15px;">결과 보기</button>`;
+      }
+      document.querySelector('.options').innerHTML += `
+        <div style="margin-top:15px;">
+          <strong>${resultMsg}</strong><br>
+          ${explanation}<br>
+          ${nextBtn}
+        </div>
+      `;
       // 선택지 버튼 비활성화
       const buttons = document.querySelectorAll('.options button');
       buttons.forEach(btn => btn.disabled = true);
+      // 통계 갱신
+      document.querySelector('#quiz-screen > div').innerHTML = `<strong>문제 ${currentQuestion + 1}/${totalQuestions}, 정답 ${correctCount}개, 오답 ${wrongCount}개</strong>`;
     }
+
+    function nextQuestion() {
+      currentQuestion++;
+      showQuestion(currentQuestion);
+    }
+
+    function showResult() {
+      document.getElementById('quiz-screen').innerHTML = `
+        <h2>결과</h2>
+        <p>총 ${totalQuestions}문제 중 ${correctCount}개 정답, ${wrongCount}개 오답</p>
+        <button onclick="goHome()" style="margin-top:20px;">홈으로</button>
+      `;
+    }
+
     function goHome() {
       document.getElementById('quiz-screen').style.display = 'none';
       document.getElementById('home-screen').style.display = 'block';
