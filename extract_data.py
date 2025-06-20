@@ -4,9 +4,9 @@ import json
 # 엑셀 파일 경로
 excel_file = 'ExamBank_Master_Data_V4.0.xlsx'
 # 생성할 JSON 파일 경로
-json_file = 'simple-data-20-10.json'
+json_file = 'simple-data-21-10.json'
 # 추출할 회차
-target_round = 20
+target_round = 21
 # 추출할 문제 개수
 num_questions = 10
 
