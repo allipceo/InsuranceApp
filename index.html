@@ -70,16 +70,20 @@
 
     async function loadQuestions(examNumber) {
         try {
-            console.log(`${examNumber}회 데이터 파일 로딩 시도...`);
             const filename = `simple-data-${examNumber}-10.json`;
-            console.log(`파일명: ${filename}`);
             const response = await fetch(filename);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            console.log(`${examNumber}회 데이터 로딩 성공:`, data.questions.length, '문제');
-            return data.questions;
+            // 배열 또는 객체 모두 지원
+            if (Array.isArray(data)) {
+                return data;
+            } else if (data.questions) {
+                return data.questions;
+            } else {
+                throw new Error("데이터 구조 오류");
+            }
         } catch (error) {
             console.error(`${examNumber}회 JSON 로딩 실패:`, error);
             alert(`${examNumber}회 문제 데이터를 불러오는데 실패했습니다.`);
@@ -139,7 +143,7 @@
         </div>`;
         
         const questionText = `<div id="question-text">
-            <pre>${q.fullText}</pre>
+            <pre>${q.question || q.fullText}</pre>
         </div>`;
         
         const answerButtons = `<div id="answer-buttons">
