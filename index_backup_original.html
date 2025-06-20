@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>보험중개사 자격시험</title>
+    <style>
+        body { font-family: sans-serif; max-width: 400px; margin: 40px auto; }
+        .btn { display: block; width: 100%; margin: 10px 0; padding: 15px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }
+        .blue { background: #3498db; color: #fff; }
+        .gray { background: #bdc3c7; color: #fff; }
+        #top { display: flex; justify-content: space-between; align-items: center; }
+        #result { margin: 20px 0; font-weight: bold; }
+        #homebtn { margin-top: 20px; background: #6c757d !important; color: #fff !important; cursor: pointer; }
+        #source-msg { font-size: 12px; color: #888; margin-top: 8px; text-align: right; }
+        #loading { font-size: 15px; color: #555; text-align: center; margin: 30px 0; }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <script>
+    let correctCount=0, wrongCount=0, currentQuestion=0;
+    let dataSourceMsg = '';
+
+    async function loadQuestions() {
+      try {
+        const response = await fetch('test-data.json');
+        const data = await response.json();
+        // IBEX_23으로 시작하는 것만 필터링
+        const questions = [];
+        for (let key in data) {
+          if (key.startsWith('IBEX_23_')) {
+            const q = data[key];
+            // 기존 코드 호환을 위해 필드명 맞춤
+            questions.push({
+              q: q.question,
+              o: q.options,
+              a: q.correct,
+              correctText: q.options[q.correct]
+            });
+          }
+        }
+        dataSourceMsg = '<span id="source-msg">✅ JSON 데이터 로딩 완료</span>';
+        console.log('JSON 파일에서 데이터 로딩 성공', questions);
+        return questions;
+      } catch (error) {
+        dataSourceMsg = '<span id="source-msg">⚠️ 기본 데이터 사용 중</span>';
+        console.log('JSON 로딩 실패, 기본 데이터 사용');
+        // 기존 하드코딩 데이터 (5문제)
+        return [
+          {q: "보험업법상 보험중개사의 업무범위에 대한 설명으로 옳은 것은?", o: ["보험계약의 체결을 중개하는 업무만 할 수 있다","보험계약의 체결 중개 및 보험계약의 관리업무를 할 수 있다","보험금 지급업무를 직접 처리할 수 있다","보험상품을 직접 개발할 수 있다"], a: 1, correctText: "보험계약의 체결 중개 및 보험계약의 관리업무를 할 수 있다"},
+          {q: "보험중개사의 등록요건에 해당하지 않는 것은?", o: ["보험중개사 자격시험에 합격한 자","금고 이상의 형을 받고 5년이 경과하지 아니한 자","보험관련 업무경력이 2년 이상인 자","보험중개사 교육과정을 이수한 자"], a: 2, correctText: "보험관련 업무경력이 2년 이상인 자"},
+          {q: "보험업법상 보험회사의 의무사항으로 옳지 않은 것은?", o: ["보험약관의 신고의무","보험료율의 신고의무","임원변경의 신고의무","영업방법서의 신고의무"], a: 3, correctText: "영업방법서의 신고의무"},
+          {q: "상법상 보험계약의 성질에 대한 설명으로 옳은 것은?", o: ["편면계약이다","낙성계약이다","요물계약이다","무상계약이다"], a: 1, correctText: "낙성계약이다"},
+          {q: "민법상 계약의 해제에 관한 설명으로 옳지 않은 것은?", o: ["해제권은 상대방에 대한 의사표시로 행사한다","해제는 소급적 효력을 가진다","해제권의 행사는 철회할 수 있다","해제로 인하여 손해배상청구권이 소멸한다"], a: 3, correctText: "해제로 인하여 손해배상청구권이 소멸한다"}
+        ];
+      }
+    }
+
+    function showHome() {
+      document.getElementById('app').innerHTML = `
+        <h2>보험중개사 자격시험</h2>
+        <button class='btn gray'>20회</button>
+        <button class='btn gray'>21회</button>
+        <button class='btn gray'>22회</button>
+        <button class='btn blue' onclick='showQuestion(0)'>23회</button>
+        <button class='btn gray'>24회</button>
+        <button class='btn gray'>25회</button>
+      `;
+      correctCount=0; wrongCount=0; currentQuestion=0;
+      window.questionsData = null;
+      dataSourceMsg = '';
+    }
+
+    async function showQuestion(idx) {
+      currentQuestion=idx;
+      if (!window.questionsData) {
+        document.getElementById('app').innerHTML = `<div id='loading'>데이터 로딩 중...</div>`;
+        window.questionsData = await loadQuestions();
+      }
+      let q = window.questionsData[idx];
+      let top = `<div id='top'><div>23회 보험중개사 시험 (문제 ${idx+1}/5)</div><div>정답: ${correctCount}개 | 오답: ${wrongCount}개</div></div>`;
+      let opts = '';
+      for(let i=0;i<4;i++) opts += `<button class='btn blue' id='opt${i}' onclick='check(${i})'>${q.o[i]}</button>`;
+      document.getElementById('app').innerHTML = `${top}<div style='margin:20px 0;'>${q.q}</div><div id='opts'>${opts}</div><div id='result'></div><button id='homebtn' class='btn gray' onclick='goHome()'>홈</button>${dataSourceMsg}`;
+      document.getElementById('homebtn').disabled = false;
+    }
+
+    function check(i) {
+      let q = window.questionsData[currentQuestion];
+      let correct = (i===q.a);
+      if(correct) correctCount++; else wrongCount++;
+      document.getElementById('result').textContent = correct ? '정답입니다!' : '오답입니다.';
+      for(let j=0;j<4;j++) document.getElementById('opt'+j).disabled = true;
+      document.getElementById('top').innerHTML = `<div>23회 보험중개사 시험 (문제 ${currentQuestion+1}/5)</div><div>정답: ${correctCount}개 | 오답: ${wrongCount}개</div>`;
+      if(currentQuestion<4) document.getElementById('result').innerHTML += `<br><button class='btn blue' onclick='showQuestion(${currentQuestion+1})'>다음 문제</button>`;
+      else document.getElementById('result').innerHTML += `<br><button class='btn blue' onclick='showResult()'>결과 보기</button>`;
+      document.getElementById('homebtn').disabled = false;
+    }
+    function showResult() {
+      let answerNums = ['①','②','③','④'];
+      let answerList = '';
+      for(let i=0;i<5;i++) {
+        let q = window.questionsData[i];
+        answerList += `문제 ${i+1}: ${answerNums[q.a]}번 - ${q.correctText}<br>`;
+      }
+      document.getElementById('app').innerHTML = `
+        <h2>23회 시험 완료!</h2>
+        <p>총 문제: 5개<br>정답: ${correctCount}개<br>오답: ${wrongCount}개</p>
+        <div style='margin:20px 0;'><b>각 문제별 정답:</b><br>${answerList}</div>
+        <button class='btn blue' onclick='goHome()'>홈으로</button>
+        ${dataSourceMsg}
+      `;
+    }
+    function goHome() {
+      correctCount=0; wrongCount=0; currentQuestion=0;
+      showHome();
+    }
+    showHome();
+    </script>
+</body>
+</html>

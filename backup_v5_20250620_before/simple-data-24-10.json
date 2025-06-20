@@ -1,0 +1,64 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "ibexId": "IBEX_24_001_T1_S01_001",
+      "fullText": "보험중개사 시험 24회 1번 문제",
+      "answer": 1
+    },
+    {
+      "id": 2,
+      "ibexId": "IBEX_24_002_T1_S01_002",
+      "fullText": "보험중개사 시험 24회 2번 문제",
+      "answer": 2
+    },
+    {
+      "id": 3,
+      "ibexId": "IBEX_24_003_T1_S01_003",
+      "fullText": "보험중개사 시험 24회 3번 문제",
+      "answer": 3
+    },
+    {
+      "id": 4,
+      "ibexId": "IBEX_24_004_T1_S01_004",
+      "fullText": "보험중개사 시험 24회 4번 문제",
+      "answer": 4
+    },
+    {
+      "id": 5,
+      "ibexId": "IBEX_24_005_T1_S01_005",
+      "fullText": "보험중개사 시험 24회 5번 문제",
+      "answer": 1
+    },
+    {
+      "id": 6,
+      "ibexId": "IBEX_24_006_T1_S01_006",
+      "fullText": "보험중개사 시험 24회 6번 문제",
+      "answer": 2
+    },
+    {
+      "id": 7,
+      "ibexId": "IBEX_24_007_T1_S01_007",
+      "fullText": "보험중개사 시험 24회 7번 문제",
+      "answer": 3
+    },
+    {
+      "id": 8,
+      "ibexId": "IBEX_24_008_T1_S01_008",
+      "fullText": "보험중개사 시험 24회 8번 문제",
+      "answer": 4
+    },
+    {
+      "id": 9,
+      "ibexId": "IBEX_24_009_T1_S01_009",
+      "fullText": "보험중개사 시험 24회 9번 문제",
+      "answer": 1
+    },
+    {
+      "id": 10,
+      "ibexId": "IBEX_24_010_T1_S01_010",
+      "fullText": "보험중개사 시험 24회 10번 문제",
+      "answer": 2
+    }
+  ]
+} 

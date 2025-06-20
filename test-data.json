@@ -1,57 +1,83 @@
-{
-  "IBEX_23_001_T1_S01_001": {
-    "question": "보험업법상 보험중개사의 업무범위에 대한 설명으로 옳은 것은?",
-    "options": [
-      "보험계약의 체결을 중개하는 업무만 할 수 있다",
-      "보험계약의 체결 중개 및 보험계약의 관리업무를 할 수 있다",
-      "보험금 지급업무를 직접 처리할 수 있다",
-      "보험상품을 직접 개발할 수 있다"
-    ],
-    "correct": 1,
-    "explanation": "보험업법 제176조에 따라 보험중개사는 보험계약의 체결 중개 및 보험계약의 관리업무를 할 수 있습니다."
-  },
-  "IBEX_23_002_T1_S01_002": {
-    "question": "보험중개사의 등록요건에 해당하지 않는 것은?",
-    "options": [
-      "보험중개사 자격시험에 합격한 자",
-      "금고 이상의 형을 받고 5년이 경과하지 아니한 자",
-      "보험관련 업무경력이 2년 이상인 자",
-      "보험중개사 교육과정을 이수한 자"
-    ],
-    "correct": 2,
-    "explanation": "보험중개사 등록요건에 보험관련 업무경력 조건은 없습니다. 금고 이상의 형을 받고 5년이 경과하지 아니한 자는 등록이 제한됩니다."
-  },
-  "IBEX_23_003_T1_S02_003": {
-    "question": "보험업법상 보험회사의 의무사항으로 옳지 않은 것은?",
-    "options": [
-      "보험약관의 신고의무",
-      "보험료율의 신고의무",
-      "임원변경의 신고의무",
-      "영업방법서의 신고의무"
-    ],
-    "correct": 3,
-    "explanation": "보험업법상 보험회사는 보험약관, 보험료율, 임원변경 등을 신고해야 하지만, 영업방법서의 신고의무는 없습니다."
-  },
-  "IBEX_23_004_T1_S03_004": {
-    "question": "상법상 보험계약의 성질에 대한 설명으로 옳은 것은?",
-    "options": [
-      "편면계약이다",
-      "낙성계약이다",
-      "요물계약이다",
-      "무상계약이다"
-    ],
-    "correct": 1,
-    "explanation": "상법상 보험계약은 보험자와 보험계약자의 의사표시가 합치되면 성립하는 낙성계약입니다."
-  },
-  "IBEX_23_005_T1_S04_005": {
-    "question": "민법상 계약의 해제에 관한 설명으로 옳지 않은 것은?",
-    "options": [
-      "해제권은 상대방에 대한 의사표시로 행사한다",
-      "해제는 소급적 효력을 가진다",
-      "해제권의 행사는 철회할 수 있다",
-      "해제로 인하여 손해배상청구권이 소멸한다"
-    ],
-    "correct": 3,
-    "explanation": "민법상 계약의 해제로 인하여 손해배상청구권은 소멸하지 않습니다. 해제권 행사 후에도 손해배상을 청구할 수 있습니다."
-  }
-} 
+// 서대리님 대신 노팀장이 직접 처리
+console.log("엑셀 파일 읽기 및 JSON 생성 시작...");
+
+// 파일 읽기 시도
+try {
+    const fileContent = await window.fs.readFile('ExamBank_Master_Data_V4.0.xlsx');
+    console.log("엑셀 파일 크기:", fileContent.byteLength, "bytes");
+    
+    // SheetJS로 엑셀 파일 파싱
+    const XLSX = await import('https://cdn.sheetjs.com/xlsx-0.20.0/package/xlsx.mjs');
+    const workbook = XLSX.read(fileContent, { type: 'array' });
+    
+    console.log("워크북 시트 목록:", workbook.SheetNames);
+    
+    // 첫 번째 시트 가져오기
+    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+    
+    console.log("데이터 행 수:", jsonData.length);
+    console.log("첫 5행 데이터:", jsonData.slice(0, 5));
+    
+} catch (error) {
+    console.error("파일 읽기 실패:", error.message);
+    console.log("대안: 수동으로 20개 문제 생성...");
+    
+    // 기존 5개를 기반으로 20개 생성 (더미 포함)
+    const existingData = {
+        "IBEX_23_001": {
+            "question": "보험업법상 보험중개사의 업무범위에 대한 설명으로 옳은 것은?",
+            "options": [
+                "보험계약의 체결을 중개하는 업무만 할 수 있다",
+                "보험계약의 체결 중개 및 보험계약의 관리업무를 할 수 있다",
+                "보험금 지급업무를 직접 처리할 수 있다",
+                "보험상품을 직접 개발할 수 있다"
+            ],
+            "correct": 1,
+            "explanation": "보험업법 제176조에 따라 보험중개사는 보험계약의 체결 중개 및 보험계약의 관리업무를 할 수 있습니다."
+        },
+        "IBEX_23_002": {
+            "question": "보험중개사의 등록요건에 해당하지 않는 것은?",
+            "options": [
+                "보험중개사 자격시험에 합격한 자",
+                "금고 이상의 형을 받고 5년이 경과하지 아니한 자",
+                "보험관련 업무경력이 2년 이상인 자",
+                "보험중개사 교육과정을 이수한 자"
+            ],
+            "correct": 2,
+            "explanation": "보험중개사 등록요건에 보험관련 업무경력 조건은 없습니다."
+        }
+    };
+    
+    // 20개까지 확장 (더미 데이터 포함)
+    const fullData = {};
+    
+    // 기존 2개는 실제 데이터
+    fullData["IBEX_23_001"] = existingData["IBEX_23_001"];
+    fullData["IBEX_23_002"] = existingData["IBEX_23_002"];
+    
+    // 나머지는 더미 데이터로 채우기 (구조 테스트용)
+    for(let i = 3; i <= 20; i++) {
+        const num = i.toString().padStart(3, '0');
+        fullData[`IBEX_23_${num}`] = {
+            "question": `23회 ${i}번 문제 (테스트용)`,
+            "options": [
+                `${i}번 선택지 1`,
+                `${i}번 선택지 2`,
+                `${i}번 선택지 3`,
+                `${i}번 선택지 4`
+            ],
+            "correct": (i % 4),
+            "explanation": `23회 ${i}번 문제 해설 (테스트용)`
+        };
+    }
+    
+    console.log("20개 문제 데이터 생성 완료");
+    console.log("샘플 데이터:", Object.keys(fullData));
+    console.log("총 문제 수:", Object.keys(fullData).length);
+    
+    // JSON 문자열로 변환
+    const jsonString = JSON.stringify(fullData, null, 2);
+    console.log("JSON 크기:", jsonString.length, "characters");
+    console.log("첫 500자:", jsonString.substring(0, 500));
+}

@@ -25,7 +25,7 @@
             color: #fff;
         }
         .blue { background: #3498db; color: #fff; }
-        .gray { background: #6c757d; color: #fff; cursor: not-allowed; }
+        .gray { background: #bdc3c7; color: #fff; }
         #top { 
             display: flex; 
             justify-content: space-between; 
@@ -66,23 +66,14 @@
     <script>
     let correctCount = 0, wrongCount = 0, currentQuestion = 0;
     let questions = null;
-    let currentExam = null;
 
-    async function loadQuestions(examNumber) {
+    async function loadQuestions() {
         try {
-            console.log(`${examNumber}회 데이터 파일 로딩 시도...`);
-            const filename = `simple-data-${examNumber}-10.json`;
-            console.log(`파일명: ${filename}`);
-            const response = await fetch(filename);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            const response = await fetch('simple-data-23-10.json');
             const data = await response.json();
-            console.log(`${examNumber}회 데이터 로딩 성공:`, data.questions.length, '문제');
             return data.questions;
         } catch (error) {
-            console.error(`${examNumber}회 JSON 로딩 실패:`, error);
-            alert(`${examNumber}회 문제 데이터를 불러오는데 실패했습니다.`);
+            console.error('JSON 로딩 실패:', error);
             return null;
         }
     }
@@ -90,51 +81,35 @@
     function showHome() {
         document.getElementById('app').innerHTML = `
             <h2>보험중개사 자격시험</h2>
-            <button class='btn blue' onclick='startExam(20)'>20회</button>
-            <button class='btn gray' onclick='showNotReady()'>21회</button>
-            <button class='btn blue' onclick='startExam(22)'>22회</button>
-            <button class='btn blue' onclick='startExam(23)'>23회</button>
-            <button class='btn blue' onclick='startExam(24)'>24회</button>
-            <button class='btn gray' onclick='showNotReady()'>25회</button>
+            <button class='btn gray'>20회</button>
+            <button class='btn gray'>21회</button>
+            <button class='btn gray'>22회</button>
+            <button class='btn blue' onclick='startExam()'>23회</button>
+            <button class='btn gray'>24회</button>
+            <button class='btn gray'>25회</button>
         `;
         correctCount = 0;
         wrongCount = 0;
         currentQuestion = 0;
         questions = null;
-        currentExam = null;
     }
 
-    function showNotReady() {
-        alert("준비 중입니다.");
-    }
-
-    async function startExam(examNumber) {
-        currentExam = examNumber;
-        console.log(`=== ${examNumber}회 시험 시작 ===`);
-        
-        // 상태 초기화
-        questions = null;
-        currentQuestion = 0;
-        correctCount = 0;
-        wrongCount = 0;
-        
-        document.getElementById('app').innerHTML = '<div style="text-align: center; margin: 20px;">데이터 로딩 중...</div>';
-        questions = await loadQuestions(examNumber);
+    async function startExam() {
         if (!questions) {
-            document.getElementById('app').innerHTML = '<div style="color: red; text-align: center;">데이터 로딩 실패</div>';
-            return;
+            document.getElementById('app').innerHTML = '<div style="text-align: center; margin: 20px;">데이터 로딩 중...</div>';
+            questions = await loadQuestions();
+            if (!questions) {
+                document.getElementById('app').innerHTML = '<div style="color: red; text-align: center;">데이터 로딩 실패</div>';
+                return;
+            }
         }
-        console.log(`${examNumber}회 데이터 로딩 완료:`, questions);
-        
         showQuestion();
     }
 
     function showQuestion() {
         const q = questions[currentQuestion];
-        console.log(`${currentExam}회 문제 ${currentQuestion + 1} 표시`);
-        
         const top = `<div id="top">
-            <div>${currentExam}회 보험중개사 시험 (문제 ${currentQuestion + 1}/10)</div>
+            <div>23회 보험중개사 시험 (문제 ${currentQuestion + 1}/10)</div>
             <div>정답: ${correctCount}개 | 오답: ${wrongCount}개</div>
         </div>`;
         
@@ -191,24 +166,15 @@
     }
 
     function showResult() {
-        console.log(`=== ${currentExam}회 시험 완료 ===`);
-        const examTitle = `${currentExam}회 보험중개사 시험`;
         let resultHTML = `
-            <h2>${examTitle} 완료!</h2>
-            <div style="margin: 20px; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-                <p style="font-size: 18px; margin-bottom: 15px;">시험 결과</p>
-                <p>총 문제: 10개<br>
-                정답: <span style="color: #3498db; font-weight: bold;">${correctCount}개</span><br>
-                오답: <span style="color: #e74c3c; font-weight: bold;">${wrongCount}개</span></p>
-                <p style="margin-top: 15px;">정답률: <span style="font-weight: bold;">${(correctCount * 10)}%</span></p>
-            </div>
+            <h2>23회 시험 완료!</h2>
+            <p>총 문제: 10개<br>정답: ${correctCount}개<br>오답: ${wrongCount}개</p>
             <button class="btn blue" onclick="goHome()">홈으로</button>
         `;
         document.getElementById('app').innerHTML = resultHTML;
     }
 
     function goHome() {
-        console.log("홈 버튼 클릭됨! showHome() 함수를 호출합니다.");
         showHome();
     }
 
